@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCsvFile, months } from "./utilities";
+import { getCsvFile, months, calculateAge } from "./utilities";
 import "./App.css";
 import { CsvFileJson } from "./types";
 import { AppBar, Toolbar, Typography } from "@mui/material";
@@ -19,42 +19,6 @@ export default function App() {
     const birthday = new Date(date);
     const birthdayMonth = birthday.getMonth();
     return birthdayMonth === monthFilter;
-  };
-
-  const calculateAge = (
-    birthdate: string,
-    type: "years" | "days" | "hours"
-  ) => {
-    const birthDate = new Date(birthdate);
-    const today = new Date();
-    let age;
-
-    switch (type) {
-      case "years":
-        age = today.getFullYear() - birthDate.getFullYear();
-        if (
-          today.getMonth() < birthDate.getMonth() ||
-          (today.getMonth() === birthDate.getMonth() &&
-            today.getDate() < birthDate.getDate())
-        ) {
-          age--;
-        }
-        break;
-      case "days":
-        age = Math.floor(
-          (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24)
-        );
-        break;
-      case "hours":
-        age = Math.floor(
-          (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60)
-        );
-        break;
-      default:
-        age = 0;
-    }
-
-    return age;
   };
 
   const handleSort = () => {

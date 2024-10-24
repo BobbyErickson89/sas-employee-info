@@ -17,11 +17,9 @@ export const getCsvFile = async (filePath: string) => {
       transformHeader: (header) => convertToCamelCase(header),
     }).data;
 
-    // Formatting the dates
     jsonData = jsonData.map((data: any) => {
       const birthday = formatDate(data.birthday);
-      const age = calculateAge(birthday);
-      return { ...data, birthday, age };
+      return { ...data, birthday, age: birthday };
     });
 
     return jsonData;
@@ -58,18 +56,37 @@ export const formatDate = (dateStr: string) => {
 };
 
 // calculates age based on birthdate string
-export const calculateAge = (birthdate: string): number => {
+export const calculateAge = (
+  birthdate: string,
+  type: "years" | "days" | "hours"
+) => {
   const birthDate = new Date(birthdate);
   const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDifference = today.getMonth() - birthDate.getMonth();
+  let age;
 
-  // Adjust age if the current date is before the birthdate in the current year
-  if (
-    monthDifference < 0 ||
-    (monthDifference === 0 && today.getDate() < birthDate.getDate())
-  ) {
-    age--;
+  switch (type) {
+    case "years":
+      age = today.getFullYear() - birthDate.getFullYear();
+      if (
+        today.getMonth() < birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() &&
+          today.getDate() < birthDate.getDate())
+      ) {
+        age--;
+      }
+      break;
+    case "days":
+      age = Math.floor(
+        (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+      break;
+    case "hours":
+      age = Math.floor(
+        (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60)
+      );
+      break;
+    default:
+      age = 0;
   }
 
   return age;
