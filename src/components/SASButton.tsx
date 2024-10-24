@@ -5,7 +5,7 @@ interface ButtonProps {
   onClick: () => any;
 }
 
-export default function Button({ text, onClick }: ButtonProps) {
+export default function SASButton({ text, onClick }: ButtonProps) {
   return (
     <button className="sas-button" onClick={onClick}>
       {text}

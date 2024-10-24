@@ -6,7 +6,7 @@ interface DropdownProps {
   options: { value: string | number; label: string }[];
 }
 
-export default function Dropdown({
+export default function SASDropdown({
   selectedValue,
   onChange,
   options,

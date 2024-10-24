@@ -57,6 +57,7 @@ export const formatDate = (dateStr: string) => {
   return `${parseInt(month, 10)}/${String(day).padStart(2, "0")}/${year}`;
 };
 
+// calculates age based on birthdate string
 export const calculateAge = (birthdate: string): number => {
   const birthDate = new Date(birthdate);
   const today = new Date();

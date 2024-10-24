@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { getCsvFile, months } from "./utilities";
 import "./App.css";
 import { CsvFileJson } from "./types";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
-import Button from "./components/Button";
-import Dropdown from "./components/Dropdown";
+import { AppBar, Toolbar, Typography } from "@mui/material";
+import Button from "./components/SASButton";
+import Dropdown from "./components/SASDropdown";
 
 export default function App() {
   const today = new Date();
@@ -36,10 +36,10 @@ export default function App() {
   }, []);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <>
       <AppBar position="static" sx={headerHeight}>
         <Toolbar sx={{ gap: 5 }}>
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>
             Employee Information
           </Typography>
 
@@ -66,7 +66,7 @@ export default function App() {
         </Toolbar>
       </AppBar>
 
-      <table>
+      <table className="sas-table">
         <thead>
           <tr>
             <th>First Name</th>
@@ -88,11 +88,12 @@ export default function App() {
           ))}
         </tbody>
       </table>
-    </Box>
+    </>
   );
 }
 
 const headerHeight = {
   minHeight: "100px",
   justifyContent: "center",
+  minWidth: "700px",
 };
