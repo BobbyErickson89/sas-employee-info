@@ -77,12 +77,12 @@ export const calculateAge = (
       break;
     case "days":
       age = Math.floor(
-        (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24)
+        (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24) // 1000 ms, 60 s, 60 min, 24 hours
       );
       break;
     case "hours":
       age = Math.floor(
-        (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60)
+        (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60) // 1000 ms, 60 s, 60 min
       );
       break;
     default:
