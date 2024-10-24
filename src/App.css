@@ -30,4 +30,5 @@ th {
 
 .sas-table-age-header:hover {
   cursor: pointer;
+  background-color: #f5f5f5;
 }
