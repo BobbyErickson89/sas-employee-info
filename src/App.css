@@ -3,6 +3,7 @@
   width: calc(100% - 40px);
   align-self: "center";
   margin: 20px;
+  table-layout: fixed;
 }
 
 .sas-table th {
@@ -25,4 +26,8 @@ th {
 
 .sas-table tr:hover td {
   background-color: #f5f5f5;
+}
+
+.sas-table-age-header:hover {
+  cursor: pointer;
 }

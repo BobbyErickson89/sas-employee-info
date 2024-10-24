@@ -13,11 +13,54 @@ export default function App() {
   const [csvData, setCsvData] = useState<CsvFileJson[]>([]);
   const [monthFilter, setMonthFilter] = useState<number>(currentMonth);
   const [filteredData, setFilteredData] = useState<CsvFileJson[]>([]);
+  const [sortType, setSortType] = useState<"years" | "days" | "hours">("years");
 
   const matchesMonth = (date: string) => {
     const birthday = new Date(date);
     const birthdayMonth = birthday.getMonth();
     return birthdayMonth === monthFilter;
+  };
+
+  const calculateAge = (
+    birthdate: string,
+    type: "years" | "days" | "hours"
+  ) => {
+    const birthDate = new Date(birthdate);
+    const today = new Date();
+    let age;
+
+    switch (type) {
+      case "years":
+        age = today.getFullYear() - birthDate.getFullYear();
+        if (
+          today.getMonth() < birthDate.getMonth() ||
+          (today.getMonth() === birthDate.getMonth() &&
+            today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+        break;
+      case "days":
+        age = Math.floor(
+          (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+        break;
+      case "hours":
+        age = Math.floor(
+          (today.getTime() - birthDate.getTime()) / (1000 * 60 * 60)
+        );
+        break;
+      default:
+        age = 0;
+    }
+
+    return age;
+  };
+
+  const handleSort = () => {
+    const nextSortType =
+      sortType === "years" ? "days" : sortType === "days" ? "hours" : "years";
+    setSortType(nextSortType);
   };
 
   const fetchData = async () => {
@@ -73,7 +116,9 @@ export default function App() {
             <th>Last Name</th>
             <th>Location</th>
             <th>Birthday</th>
-            <th>Age</th>
+            <th className="sas-table-age-header" onClick={handleSort}>
+              Age ({sortType})
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -83,7 +128,7 @@ export default function App() {
               <td>{data.lastName}</td>
               <td>{data.location}</td>
               <td>{data.birthday}</td>
-              <td>{data.age}</td>
+              <td>{calculateAge(data.birthday, sortType)}</td>
             </tr>
           ))}
         </tbody>
