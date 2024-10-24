@@ -1,80 +1,93 @@
-import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
-import { getCsvFile } from "./utilities";
+import { useEffect, useState } from "react";
+import { getCsvFile, months } from "./utilities";
 import "./App.css";
 import { CsvFileJson } from "./types";
-import {
-  AppBar,
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import Button from "./components/Button";
+import Dropdown from "./components/Dropdown";
 
 export default function App() {
+  const today = new Date();
+  const currentMonth = today.getMonth();
+
   const [csvData, setCsvData] = useState<CsvFileJson[]>([]);
-  const [monthFilter, setMonthFilter] = useState<string>("");
+  const [monthFilter, setMonthFilter] = useState<number>(currentMonth);
+  const [filteredData, setFilteredData] = useState<CsvFileJson[]>([]);
+
+  const matchesMonth = (date: string) => {
+    const birthday = new Date(date);
+    const birthdayMonth = birthday.getMonth();
+    return birthdayMonth === monthFilter;
+  };
+
+  const fetchData = async () => {
+    const data: CsvFileJson[] = (await getCsvFile(
+      "data/ProgrammingChallengeData.csv"
+    )) as CsvFileJson[];
+
+    const filteredByBday = data.filter((data) => matchesMonth(data.birthday));
+
+    setCsvData(data);
+    setFilteredData(filteredByBday);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data: CsvFileJson[] = (await getCsvFile(
-        "data/ProgrammingChallengeData.csv"
-      )) as CsvFileJson[];
-      setCsvData(data);
-    };
     fetchData();
   }, []);
-
-  // const useStyles = makeStyles({
-  //   select: {
-  //     "&:before": {
-  //       borderColor: "white",
-  //     },
-  //     "&:after": {
-  //       borderColor: "white",
-  //     },
-  //     "&:not(.Mui-disabled):hover::before": {
-  //       borderColor: "white",
-  //     },
-  //   },
-  //   icon: {
-  //     fill: "white",
-  //   },
-  //   root: {
-  //     color: "white",
-  //   },
-  // });
-
-  // const classes = useStyles();
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={headerHeight}>
-        <Toolbar>
+        <Toolbar sx={{ gap: 5 }}>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>
             Employee Information
           </Typography>
-          <Button variant="outlined" color="inherit">
-            Apply Filter
-          </Button>
-          <FormControl size="small">
-            <InputLabel id="month-filter">Month</InputLabel>
-            <Select
-              labelId="month-filter"
-              value={monthFilter}
-              label="Month"
-              onChange={(e) => setMonthFilter(e.target.value)}
-              sx={{ width: "200px", color: "white" }}
-            >
-              <MenuItem value="January">January</MenuItem>
-            </Select>
-          </FormControl>
+
+          <Button
+            text="Apply Filter"
+            onClick={() => {
+              if (monthFilter === months.length) {
+                setFilteredData(csvData);
+                return;
+              }
+              const newFilteredData = csvData.filter((data) =>
+                matchesMonth(data.birthday)
+              );
+
+              setFilteredData(newFilteredData);
+            }}
+          />
+
+          <Dropdown
+            selectedValue={monthFilter}
+            onChange={(e) => setMonthFilter(Number(e.target.value))}
+            options={[...months, { value: months.length, label: "All Months" }]}
+          />
         </Toolbar>
       </AppBar>
+
+      <table>
+        <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Location</th>
+            <th>Birthday</th>
+            <th>Age</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredData.map((data, index) => (
+            <tr key={index}>
+              <td>{data.firstName}</td>
+              <td>{data.lastName}</td>
+              <td>{data.location}</td>
+              <td>{data.birthday}</td>
+              <td>{data.age}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Box>
   );
 }

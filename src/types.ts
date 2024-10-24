@@ -3,4 +3,5 @@ export interface CsvFileJson {
   lastName: string;
   location: string;
   birthday: string;
+  age: number;
 }

@@ -8,14 +8,20 @@ export const getCsvFile = async (filePath: string) => {
       throw new Error("Request failed with status " + response.status);
     }
 
+    // Getting our string of csv data
     const csvString = await response.text();
+
+    // Parsing the csv data into json
     let jsonData = Papa.parse(csvString, {
       header: true,
       transformHeader: (header) => convertToCamelCase(header),
     }).data;
 
+    // Formatting the dates
     jsonData = jsonData.map((data: any) => {
-      return { ...data, birthday: formatDate(data.birthday) };
+      const birthday = formatDate(data.birthday);
+      const age = calculateAge(birthday);
+      return { ...data, birthday, age };
     });
 
     return jsonData;
@@ -37,7 +43,8 @@ export const convertToCamelCase = (str: string) => {
     .join("");
 };
 
-export const formatDate = (dateStr: string): string => {
+// formatting date to mm/dd/yyyy format
+export const formatDate = (dateStr: string) => {
   const longFormat = new Date(dateStr);
   if (!isNaN(longFormat.getTime())) {
     const month = longFormat.getMonth() + 1; // getMonth() returns 0-based month
@@ -50,8 +57,34 @@ export const formatDate = (dateStr: string): string => {
   return `${parseInt(month, 10)}/${String(day).padStart(2, "0")}/${year}`;
 };
 
-// TODO: could be used for checking if date is already in correct format
-export const isDateInMDYFormat = (dateStr: string): boolean => {
-  const regex = /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/\d{4}$/;
-  return regex.test(dateStr);
+export const calculateAge = (birthdate: string): number => {
+  const birthDate = new Date(birthdate);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+
+  // Adjust age if the current date is before the birthdate in the current year
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+
+  return age;
 };
+
+export const months = [
+  { value: 0, label: "January" },
+  { value: 1, label: "February" },
+  { value: 2, label: "March" },
+  { value: 3, label: "April" },
+  { value: 4, label: "May" },
+  { value: 5, label: "June" },
+  { value: 6, label: "July" },
+  { value: 7, label: "August" },
+  { value: 8, label: "September" },
+  { value: 9, label: "October" },
+  { value: 10, label: "November" },
+  { value: 11, label: "December" },
+];
