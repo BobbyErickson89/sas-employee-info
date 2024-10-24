@@ -1,0 +1,27 @@
+.sas-dropdown {
+  padding: 10px;
+  min-width: 200px;
+}
+
+.sas-button {
+  padding: 10px 15px;
+}
+
+.sas-button:active {
+  background-color: #1976d2;
+}
+
+.sas-button,
+.sas-dropdown {
+  color: white;
+  background-color: #1976d2;
+  border: 1px solid white;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.sas-dropdown:hover,
+.sas-button:hover {
+  cursor: pointer;
+  background-color: #2b81d6;
+}
