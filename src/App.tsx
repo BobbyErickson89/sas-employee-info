@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCsvFile, months } from "./utilities";
+import { getCsvFile, months, calculateAge } from "./utilities";
 import "./App.css";
 import { CsvFileJson } from "./types";
 import { AppBar, Toolbar, Typography } from "@mui/material";
@@ -13,11 +13,18 @@ export default function App() {
   const [csvData, setCsvData] = useState<CsvFileJson[]>([]);
   const [monthFilter, setMonthFilter] = useState<number>(currentMonth);
   const [filteredData, setFilteredData] = useState<CsvFileJson[]>([]);
+  const [sortType, setSortType] = useState<"years" | "days" | "hours">("years");
 
   const matchesMonth = (date: string) => {
     const birthday = new Date(date);
     const birthdayMonth = birthday.getMonth();
     return birthdayMonth === monthFilter;
+  };
+
+  const handleSort = () => {
+    const nextSortType =
+      sortType === "years" ? "days" : sortType === "days" ? "hours" : "years";
+    setSortType(nextSortType);
   };
 
   const fetchData = async () => {
@@ -73,7 +80,9 @@ export default function App() {
             <th>Last Name</th>
             <th>Location</th>
             <th>Birthday</th>
-            <th>Age</th>
+            <th className="sas-table-age-header" onClick={handleSort}>
+              Age ({sortType})
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -83,7 +92,7 @@ export default function App() {
               <td>{data.lastName}</td>
               <td>{data.location}</td>
               <td>{data.birthday}</td>
-              <td>{data.age}</td>
+              <td>{calculateAge(data.birthday, sortType)}</td>
             </tr>
           ))}
         </tbody>
